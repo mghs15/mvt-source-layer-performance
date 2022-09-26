@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<title>get geojson from gsi vector</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<script src='./mapbox/mapbox-gl.js'></script>
+<link href='./mapbox/mapbox-gl.css' rel='stylesheet' />
+<style>
+body { margin:0; padding:0; }
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+}
+
+</style>
+</head>
+<body>
+
+<div id='map'></div>
+
+<script>
+
+//作成したタイルのセット
+const set = [1, 10, 20, 100, 500, 1000, 5000, 10000];
+const l = set.length;
+const t = Math.floor(Math.random() * l);
+const n = set[t];
+
+const tm = {
+  start : performance.now()
+};
+
+const map = new mapboxgl.Map({
+  container: 'map', // container id
+  hash: true, //add #position on URL
+  style: `./style/${n}.json`, // stylesheet location
+  center: [139.3938, 35.6046], // starting position [lng, lat]
+  zoom: 10, // starting zoom
+  maxZoom: 17.99,
+  localIdeographFontFamily: ['MS Gothic', 'Hiragino Kaku Gothic Pro', 'sans-serif']
+});
+
+/*
+map.showTileBoundaries = true;
+map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
+map.addControl(new mapboxgl.ScaleControl() );
+*/
+
+map.on('load', () => {
+  tm.load = performance.now() - tm.start; 
+  //console.log(`load,${n},${tm.start},${tm.load},${tm.style_load},${tm.idle}`);
+});
+
+map.on('style.load', () => { 
+  tm.style_load = performance.now() - tm.start; 
+  //console.log(`style.load,${n},${tm.start},${tm.load},${tm.style_load},${tm.idle}`);
+});
+
+map.on('idle', () => { 
+  tm.idle = performance.now() - tm.start;
+  console.log(`idle,${n},${tm.start},${tm.load},${tm.style_load},${tm.idle}`);
+  location.reload();
+});
+
+</script>
+ 
+</body>
+</html>
